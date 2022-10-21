@@ -16,7 +16,7 @@ class AuthForm extends StatefulWidget {
     String email,
     String password,
     String username,
-    File image,
+    File? image,
     bool isLogin,
   ) submitFn;
 
@@ -40,23 +40,25 @@ class _AuthFormState extends State<AuthForm> {
     final isValid = _formKey.currentState?.validate();
     FocusScope.of(context).unfocus(); // it will close the keyboard
 
-    if (_userImageFile != null && !_isLogin) {
+    if (_userImageFile == null && !_isLogin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please pick an image.'),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+      return;
+    }
+
+    if (isValid != null && isValid) {
       _formKey.currentState?.save();
       widget.submitFn(
         _userEmail.trim(),
         _userPassword.trim(),
         _userName.trim(),
-        _userImageFile!,
+        _userImageFile,
         _isLogin,
       );
-    } else {
-      const snackBar = SnackBar(
-        content: Text(
-          'Please, pick am Image',
-        ),
-        backgroundColor: Colors.red,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 
